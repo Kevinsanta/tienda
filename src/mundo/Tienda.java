@@ -122,10 +122,18 @@ public class Tienda {
     public Producto darProducto(String pNombre) {
         Producto buscado = null;
 
-        // TODO: Buscar el producto con el nombre dado.
+        if(producto1.darNombre().equals(pNombre))
+        {
+            buscado = producto1;
+        } else if (producto2.darNombre().equals(pNombre)) {
+            buscado = producto2;
+        } else if (producto3.darNombre().equals(pNombre)) {
+            buscado = producto3;
+        } else if (producto4.darNombre().equals(pNombre)) {
+            buscado = producto4;
+        }
 
         return buscado;
-
     }
 
     /**
@@ -134,9 +142,19 @@ public class Tienda {
      * @return Dinero promedio obtenido por unidad de producto vendida.
      */
     public double darPromedioVentas() {
-        double respuesta = 0.0;
+        int unidadesVendidas = producto1.darCantidadUnidadesVendidas() +
+                producto2.darCantidadUnidadesVendidas() +
+                producto3.darCantidadUnidadesVendidas() +
+                producto4.darCantidadUnidadesVendidas();
 
-        // TODO: Obtener y retornar el promedio de las ventas.
+        double dineroProducto1 = producto1.darCantidadUnidadesVendidas() * producto1.calcularPrecioFinal();
+        double dineroProducto2 = producto2.darCantidadUnidadesVendidas() * producto2.calcularPrecioFinal();
+        double dineroProducto3 = producto3.darCantidadUnidadesVendidas() * producto3.calcularPrecioFinal();
+        double dineroProducto4 = producto4.darCantidadUnidadesVendidas() * producto4.calcularPrecioFinal();
+
+        double dineroTotal = dineroProducto1 + dineroProducto2 + dineroProducto3 + dineroProducto4;
+
+        double respuesta = dineroTotal / unidadesVendidas;
 
         return respuesta;
     }
@@ -149,7 +167,27 @@ public class Tienda {
     public Producto darProductoMasVendido() {
         Producto masVendido = null;
 
-        // TODO: Obtener y retornar el nombre del producto más vendido
+        int masUnidadesVendidas = 0;
+
+        if(producto1.darCantidadUnidadesVendidas() > masUnidadesVendidas){
+            masVendido = producto1;
+            masUnidadesVendidas = producto1.darCantidadUnidadesVendidas();
+        }
+
+        if(producto2.darCantidadUnidadesVendidas() > masUnidadesVendidas){
+            masVendido = producto2;
+            masUnidadesVendidas = producto2.darCantidadUnidadesVendidas();
+        }
+
+        if(producto3.darCantidadUnidadesVendidas() > masUnidadesVendidas){
+            masVendido = producto3;
+            masUnidadesVendidas = producto3.darCantidadUnidadesVendidas();
+        }
+
+        if(producto4.darCantidadUnidadesVendidas() > masUnidadesVendidas){
+            masVendido = producto4;
+            masUnidadesVendidas = producto4.darCantidadUnidadesVendidas();
+        }
 
         return masVendido;
     }
@@ -162,7 +200,31 @@ public class Tienda {
     public Producto darProductoMenosVendido() {
         Producto menosVendido = null;
 
-        // TODO: Obtiene y retorna el prodcuto menos vendido
+        int vendidosProducto1 = producto1.darCantidadUnidadesVendidas();
+        int vendidosProducto2 = producto2.darCantidadUnidadesVendidas();
+        int vendidosProducto3 = producto3.darCantidadUnidadesVendidas();
+        int vendidosProducto4 = producto4.darCantidadUnidadesVendidas();
+
+        boolean ningunaVenta = vendidosProducto1 == vendidosProducto2 &&
+                vendidosProducto2 == vendidosProducto3 &&
+                vendidosProducto3 == vendidosProducto4 &&
+                vendidosProducto4 == 0;
+
+        if(!ningunaVenta){
+            if(vendidosProducto1 < vendidosProducto2) {
+                menosVendido = producto1;
+            } else{
+                menosVendido = producto2;
+            }
+
+            if(vendidosProducto3 < menosVendido.darCantidadUnidadesVendidas()){
+                menosVendido = producto3;
+            }
+
+            if(vendidosProducto4 < menosVendido.darCantidadUnidadesVendidas()){
+                menosVendido = producto4;
+            }
+        }
 
         return menosVendido;
     }
@@ -180,7 +242,11 @@ public class Tienda {
     public int venderProducto(String pNombreProducto, int pCantidad) {
         int cantidadVendida = 0;
 
-        // TODO: Vender la cantidad pCantidad del producto con el nombre dado
+        Producto productoAVender = darProducto(pNombreProducto);
+        if(productoAVender != null){
+            cantidadVendida = productoAVender.vender(pCantidad);
+            dineroEnCaja = dineroEnCaja + (cantidadVendida * productoAVender.calcularPrecioFinal());
+        }
 
         return cantidadVendida;
     }
@@ -196,7 +262,14 @@ public class Tienda {
     public boolean abastecerProducto(String pNombreProducto, int pCantidad) {
         boolean abastece = false;
 
-        // TODO: Abastece el producto con el nombre dado en la cantidad especificada
+        Producto productoAAbastecer = darProducto(pNombreProducto);
+        if(productoAAbastecer != null){
+            boolean puedeAbastecer = productoAAbastecer.puedeAbastecer();
+            if(puedeAbastecer){
+                productoAAbastecer.abastecer(pCantidad);
+                abastece = true;
+            }
+        }
 
         return abastece;
     }
@@ -218,8 +291,19 @@ public class Tienda {
     public boolean cambiarProducto(String pNombreActual, String pNombreNuevo, String pTipo, double pValorUnitario, int pCantidadBodega, int pCantidadMinima, String pRutaImagen) {
         boolean cambio = false;
 
-        // TODO: Cambiar la información del producto, si y solo si, no existe el producto
-        // TODO: con el nombre nuevo.
+        Producto productoConNuevoNombre = darProducto(pNombreNuevo);
+        if(productoConNuevoNombre == null){
+            Producto productoActual = darProducto(pNombreActual);
+            if(productoActual != null){
+                productoActual.cambiarNombre(pNombreNuevo);
+                productoActual.cambiarTipo(pTipo);
+                productoActual.cambiarValorUnitario(pValorUnitario);
+                productoActual.cambiarCantidadBodega(pCantidadBodega);
+                productoActual.cambiarCantidadMinima(pCantidadMinima);
+                productoActual.cambiarRutaImagen(pRutaImagen);
+                cambio = true;
+            }
+        }
 
         return cambio;
     }

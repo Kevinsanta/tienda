@@ -152,7 +152,7 @@ public class Producto {
      * @param nuevoNombre
      */
     public void cambiarNombre(String nuevoNombre) {
-        // TODO: Cambiar el nombre del producto
+        nombre = nuevoNombre;
     }
 
     /**
@@ -166,28 +166,35 @@ public class Producto {
      * Cambiar el valor unitario del producto
      */
     public void cambiarValorUnitario(double nuevoValorUnitario) {
-        // TODO: Cambiar el valor unitario del producto
+        valorUnitario = nuevoValorUnitario;
     }
 
     /**
      * Cambiar la nueva cantidad en bodega
      */
     public void cambiarCantidadBodega(int nuevaCantidadEnBodega) {
-        // TODO: Cambiar la nueva cantidad en bodega
+        cantidadBodega = nuevaCantidadEnBodega;
     }
 
     /**
      * Cambiar la cantidad mínima en bodega del producto
      */
     public void cambiarCantidadMinima(int nuevaCantidadMinima) {
-        // TODO: Cambiar la cantidad mínima en bodega del producto
+        cantidadMinima = nuevaCantidadMinima;
+    }
+
+    /**
+     * Cambiar la crutal de la imagen del producto
+     */
+    public void cambiarRutaImagen(String pRutaImagen) {
+        rutaImagen = pRutaImagen;
     }
 
     /**
      * Cambia la cantidad de unidades vendidas del producto
      */
     public void cambiardarCantidadUnidadesVendidas(int nuevaCantidadUnidadesVendidas) {
-        // TODO: Cambia la cantidad de unidades vendidas del producto
+        cantidadUnidadesVendidas = nuevaCantidadUnidadesVendidas;
     }
 
     /**
@@ -196,8 +203,11 @@ public class Producto {
      * @return Precio de venta de una unidad incluyendo el IVA.
      */
     public double calcularPrecioFinal() {
-        // TODO: Calcular el valor unitario final con el IVA incluido.
-        return 0.0;
+        double iva = darIVA();
+
+        double precioFinal = valorUnitario + (valorUnitario * iva);
+
+        return precioFinal;
     }
 
     /**
@@ -208,7 +218,14 @@ public class Producto {
     public double darIVA() {
         double iva = 0.0;
 
-        // TODO: A partir del tipo de producto, retornar el IVA
+        if(tipo.toUpperCase().equals("PAPELERIA"))
+        {
+            iva = 0.16;
+        } else if (tipo.toUpperCase().equals("SUPERMERCADO")) {
+            iva = 0.04;
+        } else{
+            iva = 0.12;
+        }
 
         return iva;
     }
@@ -228,7 +245,16 @@ public class Producto {
     public int vender(int pCantidad) {
         int cantidadVendida = 0;
 
-        // TODO: Vender la cantidad dada del producto.
+        if(pCantidad > cantidadBodega)
+        {
+            cantidadVendida = cantidadBodega;
+            cantidadBodega = 0;
+        } else{
+            cantidadVendida = pCantidad;
+            cantidadBodega = cantidadBodega - pCantidad;
+        }
+
+        cantidadUnidadesVendidas = cantidadUnidadesVendidas + cantidadVendida;
 
         return cantidadVendida;
     }
@@ -240,7 +266,7 @@ public class Producto {
      * @param pCantidad Cantidad de unidades para abastecer. pCantidad >= 0.
      */
     public void abastecer(int pCantidad) {
-        // TODO: Aumentar la cantidad en inventario
+        cantidadBodega = cantidadBodega + pCantidad;
     }
 
     /**
@@ -249,7 +275,7 @@ public class Producto {
      * @return True si la cantidad en la bodega es menor que la mínima, false en caso contrario.
      */
     public boolean puedeAbastecer() {
-        // TODO: Retornar true o false si se puede abastecer o no
-        return false;
+        boolean puedeAbastecer = cantidadBodega < cantidadMinima;
+        return puedeAbastecer;
     }
 }
